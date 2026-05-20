@@ -1,0 +1,54 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: mcp-policy
+spec:
+  accessControl:
+    # Phase 2 — still deny by default, but each agent has the minimum
+    # set of tool-paths it needs explicitly allowed. The supervisor is
+    # the only agent allowed to invoke /delete/mcp.
+    defaultAction: deny
+    trustDomain: public
+    policies:
+
+      - appId: ops-agent
+        defaultAction: deny
+        namespace: mcp-access-control
+        operations:
+          - name: /write/mcp
+            httpVerb: ['POST', 'GET', 'DELETE']
+            action: allow
+          - name: /schema/mcp
+            httpVerb: ['POST', 'GET', 'DELETE']
+            action: allow
+          - name: /query/mcp
+            httpVerb: ['POST', 'GET', 'DELETE']
+            action: allow
+
+      - appId: analysis-agent
+        defaultAction: deny
+        namespace: mcp-access-control
+        operations:
+          - name: /schema/mcp
+            httpVerb: ['POST', 'GET', 'DELETE']
+            action: allow
+          - name: /query/mcp
+            httpVerb: ['POST', 'GET', 'DELETE']
+            action: allow
+
+      - appId: supervisor-agent
+        defaultAction: deny
+        namespace: mcp-access-control
+        operations:
+          - name: /write/mcp
+            httpVerb: ['POST', 'GET', 'DELETE']
+            action: allow
+          - name: /schema/mcp
+            httpVerb: ['POST', 'GET', 'DELETE']
+            action: allow
+          - name: /query/mcp
+            httpVerb: ['POST', 'GET', 'DELETE']
+            action: allow
+          - name: /delete/mcp
+            httpVerb: ['POST', 'GET', 'DELETE']
+            action: allow

@@ -1,0 +1,9 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: mcp-policy
+spec:
+  accessControl:
+    # Phase 1 — strict zero trust. No agents, no allows. Reject everything.
+    defaultAction: deny
+    trustDomain: public
