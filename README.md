@@ -1,8 +1,8 @@
-# Zero-Trust MCP Access Control — Diagrid Catalyst Demo
+# Zero-Trust MCP Access Control — Diagrid Demo
 
-A live-webinar demo showing how Catalyst (built on Dapr) enforces per-tool
+A live-webinar demo showing how Diagrid (built on Dapr) enforces per-tool
 access policies for an MCP server. Three agents — **ops**, **analysis**,
-**supervisor** — share one MCP server and one Postgres database; Catalyst
+**supervisor** — share one MCP server and one Postgres database; Diagrid
 decides who can call which tool.
 
 > **Full walkthrough:** see [DEMO.md](./DEMO.md).
@@ -48,7 +48,7 @@ Full walkthrough: see [DEMO.md](./DEMO.md).
 
 ## Two-phase demo
 
-A single Catalyst `Configuration` named `mcp-policy` is attached to
+A single Diagrid `Configuration` named `mcp-policy` is attached to
 `mcp-server`. The demo rewrites its contents between phases:
 
 | Phase | YAML applied                  | Result |

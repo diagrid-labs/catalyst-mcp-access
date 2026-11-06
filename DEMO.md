@@ -1,11 +1,11 @@
-# Zero-Trust MCP Access Control with Diagrid Catalyst
+# Zero-Trust MCP Access Control with Diagrid
 
-A live-webinar demo that shows how Catalyst (built on Dapr) enforces
+A live-webinar demo that shows how Diagrid (built on Dapr) enforces
 per-tool access policies for an MCP server.
 
 Three agents — **ops**, **analysis**, **supervisor** — all talk to **one**
 MCP server backed by a local Postgres database. The MCP server exposes
-four tools: `write`, `schema`, `query`, `delete`. Catalyst is the only
+four tools: `write`, `schema`, `query`, `delete`. Diagrid is the only
 thing deciding which agent is allowed to call which tool.
 
 ---
@@ -59,7 +59,7 @@ The supervisor is the **only** agent that can call `delete`.
 
 Why split the MCP server into four endpoints? Dapr's `accessControl`
 matches on the **HTTP path** that comes after `…/method/`. Putting each
-tool at its own path lets Catalyst allow `/write/mcp` for one agent and
+tool at its own path lets Diagrid allow `/write/mcp` for one agent and
 deny `/delete/mcp` for the same agent, with a single Configuration
 resource.
 
@@ -102,15 +102,15 @@ identity/
     └── phase2-allow.yaml     mcp-policy = deny + per-agent allows
 ```
 
-`mcp-policy` is a **single** Catalyst `Configuration` resource. It is
+`mcp-policy` is a **single** Diagrid `Configuration` resource. It is
 attached to `mcp-server` once at setup time. Both YAMLs declare
 `metadata.name: mcp-policy` — applying them rewrites that resource in
 place. The audience sees the same name throughout; only the contents
 change between phases.
 
-> If you use a different Catalyst project name (default is
+> If you use a different Diagrid project name (default is
 > `mcp-access-control`), update `namespace:` inside
-> `config/phase2-allow.yaml` to match — Catalyst uses the project
+> `config/phase2-allow.yaml` to match — Diagrid uses the project
 > name as the policy namespace.
 
 ---
@@ -156,8 +156,8 @@ diagrid dev run \
 ```
 
 Leave Terminal A alone for the rest of the demo. You'll see the server
-log each request Catalyst *allows through* (phase 1 will be quiet —
-every request is blocked at Catalyst, never reaches the server).
+log each request Diagrid *allows through* (phase 1 will be quiet —
+every request is blocked at Diagrid, never reaches the server).
 
 ---
 
@@ -187,7 +187,7 @@ spec:
 ```
 
 **(b) Run each agent.** Each command runs the agent under its own
-Catalyst App ID. Catalyst sees the App ID, looks at `mcp-policy`, and
+Diagrid App ID. Diagrid sees the App ID, looks at `mcp-policy`, and
 blocks everything.
 
 ```bash
@@ -214,13 +214,13 @@ diagrid dev run --project mcp-access-control --app-id supervisor-agent \
 ```
 ┌─ ops-agent ─ day-to-day operations (read/write, no delete)
 │ Inspect the schema before doing any work  (tool: schema)
-│   ✗ DENIED  BLOCKED by Catalyst access policy (HTTP 403)
+│   ✗ DENIED  BLOCKED by Diagrid access policy (HTTP 403)
 │ Register a new customer  (tool: write)
-│   ✗ DENIED  BLOCKED by Catalyst access policy (HTTP 403)
+│   ✗ DENIED  BLOCKED by Diagrid access policy (HTTP 403)
 │ Confirm the customer was inserted  (tool: query)
-│   ✗ DENIED  BLOCKED by Catalyst access policy (HTTP 403)
+│   ✗ DENIED  BLOCKED by Diagrid access policy (HTTP 403)
 │ Try to delete customer id=1  (should be denied)  (tool: delete)
-│   ✗ DENIED  BLOCKED by Catalyst access policy (HTTP 403)
+│   ✗ DENIED  BLOCKED by Diagrid access policy (HTTP 403)
 └─
 ops-agent summary:  0 allowed   4 denied
 ```
@@ -306,7 +306,7 @@ Phase 2's `ops-agent` inserts a row with `email = dana@example.com` and
 the `supervisor-agent` inserts `eve@example.com`. Both emails are
 `UNIQUE` in the schema, so if you re-run the demo without resetting,
 the second run's writes will return a Postgres duplicate-key error
-*from inside* an otherwise-ALLOWED tool call. Catalyst still let the
+*from inside* an otherwise-ALLOWED tool call. Diagrid still let the
 request through; it's just that the row already existed.
 
 Before any repeat run, reset both pieces:
@@ -319,7 +319,7 @@ diagrid apply --project mcp-access-control -f config/phase1-deny-all.yaml
 psql -d zerotrust_demo -f sql/init.sql
 ```
 
-## (Optional) Inspect Catalyst state live during the demo
+## (Optional) Inspect Diagrid state live during the demo
 
 ```bash
 # Show the current mcp-policy contents:
@@ -337,7 +337,7 @@ diagrid appid get mcp-server --project mcp-access-control --output yaml | grep a
    read-only. supervisor has everything."
 2. **Start Terminal A** (`diagrid dev run … mcp-server …`). "One process,
    one MCP server, four tools. The server has zero idea who's calling —
-   all the access decisions happen one hop earlier, in Catalyst."
+   all the access decisions happen one hop earlier, in Diagrid."
 3. **Phase 1, apply deny-all** and run all three agents. → Everything is
    `DENIED`. → "Day one of zero trust: nothing works until you write
    down what's allowed."

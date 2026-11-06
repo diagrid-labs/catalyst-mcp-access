@@ -1,6 +1,6 @@
 """MCP server with four tools backed by a local Postgres database.
 
-Each tool is mounted at its own HTTP path so Catalyst can enforce per-tool
+Each tool is mounted at its own HTTP path so Diagrid can enforce per-tool
 access policies via Dapr Configuration's operation-level rules:
 
     /write/mcp    -> write tool
@@ -20,9 +20,9 @@ from mcp.server.transport_security import TransportSecuritySettings
 from starlette.applications import Starlette
 from starlette.routing import Mount
 
-# Catalyst's tunnel uses a "Host: localhost" header that doesn't match the
+# Diagrid's tunnel uses a "Host: localhost" header that doesn't match the
 # server's listening host, which trips FastMCP's DNS-rebinding protection
-# (HTTP 421). Disable it for this demo — Catalyst is already authenticating
+# (HTTP 421). Disable it for this demo — Diagrid is already authenticating
 # every request via the dapr-api-token plus mTLS, so the extra Host check
 # offers nothing on top.
 _NO_HOST_CHECK = TransportSecuritySettings(enable_dns_rebinding_protection=False)

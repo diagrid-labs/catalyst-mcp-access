@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sets up the Catalyst project, App IDs, and the access-control configuration
+# Sets up the Diagrid project, App IDs, and the access-control configuration
 # (`mcp-policy`) for the zero-trust MCP demo. The single `mcp-policy`
 # resource gets rewritten between phases — see run_demo.sh.
 
@@ -10,13 +10,13 @@ cd "$SCRIPT_DIR"
 PROJECT="${DIAGRID_PROJECT:-mcp-access-control}"
 
 echo "================================================================"
-echo "  Zero-Trust MCP Access Control — Catalyst setup"
+echo "  Zero-Trust MCP Access Control — Diagrid setup"
 echo "  Project: $PROJECT"
 echo "================================================================"
 
 # 1. Project ---------------------------------------------------------------
 echo ""
-echo ">>> Selecting Catalyst project..."
+echo ">>> Selecting Diagrid project..."
 if ! diagrid project get "$PROJECT" >/dev/null 2>&1; then
     diagrid project create "$PROJECT" --wait
 fi

@@ -1,4 +1,4 @@
--- Demo database for the Catalyst zero-trust MCP demo.
+-- Demo database for the Diagrid zero-trust MCP demo.
 -- Creates two small tables that the agents will read/write/delete.
 
 DROP TABLE IF EXISTS orders;

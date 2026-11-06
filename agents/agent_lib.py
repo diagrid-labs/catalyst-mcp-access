@@ -1,8 +1,8 @@
 """Shared helpers for the demo's agent scripts.
 
-Each agent runs as its own Catalyst App ID via `diagrid dev run`, which
+Each agent runs as its own Diagrid App ID via `diagrid dev run`, which
 injects DAPR_HTTP_ENDPOINT and DAPR_API_TOKEN. Calls into the mcp-server App
-ID are routed through Catalyst, which enforces the access-control config
+ID are routed through Diagrid, which enforces the access-control config
 attached to mcp-server. A tool call that policy denies returns HTTP 403.
 """
 
@@ -43,7 +43,7 @@ def _tool_url(tool: str) -> str:
 
 
 def call_tool(tool: str, arguments: dict[str, Any]) -> tuple[bool, str]:
-    """Invoke an MCP tool through Catalyst. Returns (allowed, message)."""
+    """Invoke an MCP tool through Diagrid. Returns (allowed, message)."""
     url = _tool_url(tool)
     headers = {
         "dapr-api-token": DAPR_API_TOKEN,
@@ -62,7 +62,7 @@ def call_tool(tool: str, arguments: dict[str, Any]) -> tuple[bool, str]:
         return False, f"network error: {e!r}"
 
     if resp.status_code == 403 or "ERR_DIRECT_INVOKE" in resp.text or "PermissionDenied" in resp.text:
-        return False, f"BLOCKED by Catalyst access policy (HTTP {resp.status_code})"
+        return False, f"BLOCKED by Diagrid access policy (HTTP {resp.status_code})"
     if resp.status_code >= 400:
         return False, f"HTTP {resp.status_code}: {resp.text[:200]}"
 
